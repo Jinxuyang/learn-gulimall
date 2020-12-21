@@ -1,8 +1,13 @@
 package com.atguigu.gulimall.product.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -17,6 +22,8 @@ import com.atguigu.gulimall.product.service.CategoryService;
 
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
+    @Autowired
+    private CategoryDao categoryDao;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -28,4 +35,27 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         return new PageUtils(page);
     }
 
+    @Override
+    public List<CategoryEntity> getCategoryEntityTree() {
+        List<CategoryEntity> entities = categoryDao.selectList(null);
+        return entities.stream()
+                .filter(categoryEntity -> categoryEntity.getParentCid() == 0)
+                .map(categoryEntity -> {
+                    categoryEntity.setChildren(getChildren(categoryEntity,entities));
+                    return categoryEntity;
+                })
+                //.sorted(Comparator.comparing(CategoryEntity::getSort))
+                .collect(Collectors.toList());
+    }
+
+    public List<CategoryEntity> getChildren(CategoryEntity root,List<CategoryEntity> all){
+        return all.stream()
+                .filter(categoryEntity -> categoryEntity.getParentCid().equals(root.getCatId()))
+                .map(categoryEntity -> {
+                    categoryEntity.setChildren(getChildren(categoryEntity,all));
+                    return categoryEntity;
+                })
+                //.sorted(Comparator.comparingInt(CategoryEntity::getSort))
+                .collect(Collectors.toList());
+    }
 }

@@ -36,8 +36,9 @@ public class CouponController {
     //@RequiresPermissions("coupon:coupon:list")
     public R list(@RequestParam Map<String, Object> params) {
         PageUtils page = couponService.queryPage(params);
-
-        return R.ok().put("page", page);
+        //int x =1/0;
+        //return R.ok().put("page", page);
+        return R.error();
     }
 
 
