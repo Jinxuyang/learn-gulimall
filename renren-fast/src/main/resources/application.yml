@@ -1,3 +1,5 @@
+
+
 # Tomcat
 server:
   tomcat:
@@ -22,6 +24,14 @@ spring:
       max-file-size: 100MB
       max-request-size: 100MB
       enabled: true
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+      config:
+        server-addr: localhost:8848
+  application:
+    name: renren-fast
   redis:
     open: false  # 是否开启redis缓存  true开启   false关闭
     database: 0
