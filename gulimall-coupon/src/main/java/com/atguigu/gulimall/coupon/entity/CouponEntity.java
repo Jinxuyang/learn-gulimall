@@ -9,6 +9,8 @@ import java.util.Date;
 
 import lombok.Data;
 
+import javax.validation.constraints.Email;
+
 /**
  * 优惠券信息
  *
